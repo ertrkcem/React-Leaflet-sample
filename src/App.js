@@ -48,6 +48,16 @@ function App() {
         zIndex: 3
     }).addTo(map);
 
+    var layer = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
+      	layers: 'cite:TCI_T38SKG',
+      	format: 'image/png',
+      	version: '1.1.1',
+      	transparent: true,
+      	tiled: true,
+        attribution: '&copy; Myself',
+        zIndex: 3
+    }).addTo(map);
+
 
     // setTimeout(() => {
     //   map.removeLayer(layer);
