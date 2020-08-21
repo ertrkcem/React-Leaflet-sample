@@ -68,6 +68,22 @@ export default class App extends Component {
       this.setState({ loading: false });
     });
 
+    var retiled_TCI_T37SEB = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
+      	layers: 'cite:retiled_TCI_T37SEB',
+      	format: 'image/png',
+      	version: '1.1.1',
+      	transparent: true,
+      	tiled: true,
+        attribution: '&copy; Myself',
+        zIndex: 5
+    }).on('loading', () => {
+      console.log('retiled_TCI_T37SEB loading');
+      this.setState({ loading: true });
+    }).on('load', () => {
+      console.log('retiled_TCI_T37SEB load finished');
+      this.setState({ loading: false });
+    });
+
     var TCI_T38SKG = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
       	layers: 'cite:TCI_T38SKG',
       	format: 'image/png',
@@ -86,7 +102,8 @@ export default class App extends Component {
 
     var overlays = {
       TCI_T38SKG: TCI_T38SKG,
-      TCI_T37SEB: TCI_T37SEB
+      TCI_T37SEB: TCI_T37SEB,
+      retiled_TCI_T37SEB: retiled_TCI_T37SEB
     };
 
     L.control.layers(null, overlays).addTo(map);
