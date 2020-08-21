@@ -17,8 +17,8 @@ const { BaseLayer, Overlay } = LayersControl;
 
 function App() {
 
-  const position = [36, 35];
-  const zoom = 5;
+  const position = [37, 39];
+  const zoom = 8;
   const mapRef = useRef();
   const wmsOptions = {
     layers: 'agcurate:JPEG-sample',
@@ -38,7 +38,7 @@ function App() {
     // const imageOverlay = L.imageOverlay("http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg", bounds).addTo(map);
     // console.log('imageOverlay: ', imageOverlay);
 
-    var layer = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
+    var TCI_T37SEB = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
       	layers: 'cite:TCI_T37SEB',
       	format: 'image/png',
       	version: '1.1.1',
@@ -46,9 +46,9 @@ function App() {
       	tiled: true,
         attribution: '&copy; Myself',
         zIndex: 3
-    }).addTo(map);
+    });
 
-    var layer = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
+    var TCI_T38SKG = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
       	layers: 'cite:TCI_T38SKG',
       	format: 'image/png',
       	version: '1.1.1',
@@ -56,7 +56,14 @@ function App() {
       	tiled: true,
         attribution: '&copy; Myself',
         zIndex: 3
-    }).addTo(map);
+    });
+
+    var overlays = {
+      TCI_T38SKG: TCI_T38SKG,
+      TCI_T37SEB: TCI_T37SEB
+    };
+
+    L.control.layers(null, overlays).addTo(map);
 
 
     // setTimeout(() => {
