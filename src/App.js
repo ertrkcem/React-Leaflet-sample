@@ -1,4 +1,4 @@
-import React, { Component, useRef, useEffect } from 'react';
+import React, { Component, useRef, useEffect, createRef } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import L from 'leaflet';
@@ -10,33 +10,47 @@ import {
   MapLayer,
   Map
 } from 'react-leaflet';
-import GeoRasterLayer from 'georaster-layer-for-leaflet';
-import parseGeoraster from 'georaster';
+// import GeoRasterLayer from 'georaster-layer-for-leaflet';
+// import parseGeoraster from 'georaster';
+import { css } from "@emotion/core";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const { BaseLayer, Overlay } = LayersControl;
 
-function App() {
+const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: blue;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-Index: 1000;`;
 
-  const position = [37, 39];
-  const zoom = 8;
-  const mapRef = useRef();
-  const wmsOptions = {
-    layers: 'agcurate:JPEG-sample',
-    format: 'image/png',
-    version: '1.1.1',
-    transparent: true,
-    tiled: true,
-    attribution: '&copy; Myself',
-    zIndex: 3
-  };
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      position: [37, 39],
+      zoom: 8,
+      loading: false,
+    }
+    this.mapRef = createRef();
+  }
 
-  useEffect(() => {
-    const map = mapRef.current.leafletElement;
+
+  componentDidMount() {
+    var map = this.mapRef.current.leafletElement;
     console.log('map: ', map);
 
-    // const bounds = [[36, 35], [40, 37]];
-    // const imageOverlay = L.imageOverlay("http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg", bounds).addTo(map);
-    // console.log('imageOverlay: ', imageOverlay);
+    // var TCI_T37SEB = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
+    //   	layers: 'cite:TCI_T37SEB',
+    //   	format: 'image/png',
+    //   	version: '1.1.1',
+    //   	transparent: true,
+    //   	tiled: true,
+    //     attribution: '&copy; Myself',
+    //     zIndex: 5
+    // });
 
     var TCI_T37SEB = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
       	layers: 'cite:TCI_T37SEB',
@@ -45,7 +59,13 @@ function App() {
       	transparent: true,
       	tiled: true,
         attribution: '&copy; Myself',
-        zIndex: 3
+        zIndex: 5
+    }).on('loading', () => {
+      console.log('TCI_T37SEB loading');
+      this.setState({ loading: true });
+    }).on('load', () => {
+      console.log('TCI_T37SEB load finished');
+      this.setState({ loading: false });
     });
 
     var TCI_T38SKG = L.tileLayer.wms("http://104.248.39.254:8080/geoserver/cite/wms", {
@@ -55,7 +75,13 @@ function App() {
       	transparent: true,
       	tiled: true,
         attribution: '&copy; Myself',
-        zIndex: 3
+        zIndex: 5
+    }).on('loading', () => {
+      console.log("TCI_T38SKG loading");
+      this.setState({ loading: true });
+    }).on('load', () => {
+      console.log('TCI_T38SKG load finished');
+      this.setState({ loading: false });
     });
 
     var overlays = {
@@ -64,47 +90,20 @@ function App() {
     };
 
     L.control.layers(null, overlays).addTo(map);
+  }
 
-
-    // setTimeout(() => {
-    //   map.removeLayer(layer);
-    // },10000)
-
-    // var url_to_geotiff_file = "http://0.0.0.0:8000/sample.tif";
-    // console.log("dehe");
-    // parseGeoraster(url_to_geotiff_file).then(georaster => {
-    //   console.log("georaster:", georaster);
-
-    //   var layer = new GeoRasterLayer({
-    //       attribution: "Planet",
-    //       georaster: georaster,
-    //       resolution: 128,
-    //       zIndex: 5
-    //   });
-    //   layer.addTo(map);
-    //   console.log("bounds: ", layer.getBounds());
-    //   map.fitBounds(layer.getBounds());
-    // });
-
-
-
-  });
-
-  // componentDidMount() {
-  //   this.map = this.refs.map;
-  //   const mapLeafletElement = this.map.leafletElement;
-  //   mapLeafletElement.flyTo([36, 35], 8);
-  //   console.log('Map Layer: ', MapLayer);
-  //   // const map = L.map('map');
-  //   console.log('map: ', this.map);
-  //   // const bounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
-  //   // L.imageOverlay('TCI_20m_T33UVT_2.png', bounds).addTo(this.map);
-  // }
-
-  // render() {
+  render() {
     return (
       <div id="map">
-        <Map center={position} zoom={zoom} ref={mapRef}>
+        <div className="sweet-loading">
+          <ClipLoader
+            css={override}
+            size={35}
+            color={"#123abc"}
+            loading={this.state.loading}
+          />
+        </div>
+        <Map center={this.state.position} zoom={this.state.zoom} ref={this.mapRef}>
           <LayersControl position="topright">
             <BaseLayer checked name="OpenStreetMap.Mapnik">
               <TileLayer
@@ -131,7 +130,5 @@ function App() {
         </Map>
       </div>
     );
-  // }
+  }
 }
-
-export default App;
