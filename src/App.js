@@ -38,8 +38,8 @@ function App() {
     // const imageOverlay = L.imageOverlay("http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg", bounds).addTo(map);
     // console.log('imageOverlay: ', imageOverlay);
 
-    var layer = L.tileLayer.wms("http://localhost:8080/geoserver/agcurate/wms", {
-      	layers: 'agcurate:JPEG-sample',
+    var layer = L.tileLayer.wms("http://localhost:8080/geoserver/cite/wms", {
+      	layers: 'cite:TCI_T37SEB',
       	format: 'image/png',
       	version: '1.1.1',
       	transparent: true,
